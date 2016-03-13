@@ -6,4 +6,6 @@
 
 (defn init-tex-cache []
   (def tex-cache
-    {:tile (Texture. "tile.png")}))
+    {:tile (Texture. "tile.png")
+     :path (Texture. "path.png")
+     :barrier (Texture. "barrier.png")}))

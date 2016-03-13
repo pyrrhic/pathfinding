@@ -101,6 +101,10 @@
                             cost-from-closed)]  
         (cond
           ;ignore if start node? so start doesn't have parent
+          (false?(:passable neighbor-node))
+            (recur (rest neighbors)
+                   open
+                   closed) ;skip
           (and (contains-node? closed neighbor-node) (>= (+ (:g origin-node) (:move-cost neighbor-node)) (:g neighbor-node)))
             (recur (rest neighbors)
                    open
@@ -126,12 +130,13 @@
   (loop [path [goal]
          current (:parent goal)]
     (if (nil? current)
-      path
+      (map (fn [tile] (dissoc tile :parent :texture :f :g)) path)
       (recur (conj path current) (:parent current)))))
 
 ;sometimes the start will have it's parent set to another node, creating an infinite loop 
 ;when we're trying to build a path from the goal
 (defn calc-path [start goal tile-grid]
+  "returns a string if no path is found, else returns the goal node with parent pointing all the way back to start."
   (loop [open [(assoc start :g 0 :f 0)]
          closed []]
     (if (empty? open)
@@ -141,7 +146,7 @@
             open-without-current (remove-indx open current-index)
             closed-with-current (conj closed current-node)]
         (if (is-goal-node? current-node goal)
-          current-node
+          (extract-path current-node)
           (let [updated-lists (inspect-neighbors current-node tile-grid open-without-current closed-with-current goal)]
             (recur (:open updated-lists)
                    (:closed updated-lists))))))))

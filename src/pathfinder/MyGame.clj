@@ -1,6 +1,6 @@
 (ns pathfinder.MyGame
   (:import (com.badlogic.gdx Game Screen Gdx))
-  (:require (pathfinder [myscreen :as myscreen])))
+  (:require [pathfinder.myscreen :as myscreen]))
 
 (gen-class
  :name pathfinder.MyGame

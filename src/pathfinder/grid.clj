@@ -7,6 +7,7 @@
    :grid-y y 
    :x (* x 32) 
    :y (* y 32)
+   :passable true
    :parent nil
    :move-cost 1
    :g nil
@@ -32,6 +33,15 @@
 (defn get-num-cols
   [grid]
   (count (first grid)))
+
+;(defn remove-tile [tile]
+;  (let [x (:grid-x tile)
+;        y (:grid-y tile)]
+;    (map 
+;      #(filter 
+;         (fn [tile] (not (and (= (:grid-x tile) x)(= (:grid-y tile) y)))) 
+;         %) 
+;      tile-grid)))
 
 (defn get-tile 
   [x y grid]
