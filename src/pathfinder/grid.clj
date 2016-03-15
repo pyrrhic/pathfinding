@@ -1,8 +1,7 @@
-(ns pathfinder.grid
-  (:require [pathfinder.assets :as assets]))
+(ns pathfinder.grid)
 
 (defn- create-tile
-  [x y]
+  [x y texture]
   {:grid-x x 
    :grid-y y 
    :x (* x 32) 
@@ -12,19 +11,19 @@
    :move-cost 1
    :g nil
    :f nil
-   :texture (:tile assets/tex-cache)})
+   :texture texture})
 
-(defn- create-row [row-num num-of-columns]
+(defn- create-row [row-num num-of-columns tex-cache]
 	(loop [indx 0
 	       data []]
 	     (if (= (count data) num-of-columns)
 	       data
 	       (recur
 	         (inc indx)
-	         (conj data (create-tile row-num indx))))))
+	         (conj data (create-tile row-num indx (:tile tex-cache)))))))
 
-(defn create-grid [num-rows num-cols]
-  (vec (map #(create-row % num-cols) (range 0 num-rows))))
+(defn create-grid [num-rows num-cols tex-cache]
+  (vec (map #(create-row % num-cols tex-cache) (range 0 num-rows))))
 
 (defn get-num-rows
   [grid]
@@ -33,15 +32,6 @@
 (defn get-num-cols
   [grid]
   (count (first grid)))
-
-;(defn remove-tile [tile]
-;  (let [x (:grid-x tile)
-;        y (:grid-y tile)]
-;    (map 
-;      #(filter 
-;         (fn [tile] (not (and (= (:grid-x tile) x)(= (:grid-y tile) y)))) 
-;         %) 
-;      tile-grid)))
 
 (defn get-tile 
   [x y grid]

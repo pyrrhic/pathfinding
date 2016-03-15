@@ -14,7 +14,4 @@
 (defn app []
   (LwjglApplication. game "hello" 800 600))
 
-;(defn app []
-;  (LwjglApplication. (pathfinder.MyGame. ) "hello" 800 600))
-
 (app)
