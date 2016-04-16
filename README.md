@@ -1,14 +1,23 @@
-# path-finder-ok
+# A Star Path Finding Test!
 
-A Clojure library designed to ... well, that part is up to you.
+Experimenting with Clojure, Libgdx (dat Java interop), and my implementation of the path finding algorithm, A Star.
+
+Super un-polished and un-optimized.
+This is just a quick dirty hack to play around and learn some new-to-me tech.
 
 ## Usage
 
-FIXME
+Run desktop_launcher.clj.
 
-## License
+Green tile is the start location.
+Red tile is the end location.
+Light blue is the path.
+Light grey is a walkable tile. 
+Dark blue are walls.
 
-Copyright © 2016 FIXME
+Don't click on anything other than tiles, or you get to see the app crash.
+Also don't place the start or end location on a wall, otherwise the app will crash.
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Press Q then click on a tile to set the start location.
+Press W then click on a tile to set the end location.
+press E then click on a tile to place a wall.

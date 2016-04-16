@@ -59,6 +59,22 @@
   [x y grid]
   (get-tile (dec x) y grid))
 
+(defn get-nw-neighbor
+  [x y grid]
+  (get-tile (dec x) (inc y) grid))
+
+(defn get-ne-neighbor
+  [x y grid]
+  (get-tile (inc x) (inc y) grid))
+
+(defn get-sw-neighbor
+  [x y grid]
+  (get-tile (dec x) (dec y) grid))
+
+(defn get-se-neighbor
+  [x y grid]
+  (get-tile (inc x) (dec y) grid))
+
 (defn get-neighbors
  [x y grid]
  (filter #(not (nil? %)) 
@@ -67,7 +83,11 @@
      (get-north-neighbor x y grid)
      (get-east-neighbor x y grid)
      (get-south-neighbor x y grid)
-     (get-west-neighbor x y grid))))
+     (get-west-neighbor x y grid)
+     (get-nw-neighbor x y grid)
+     (get-ne-neighbor x y grid)
+     (get-sw-neighbor x y grid)
+     (get-se-neighbor x y grid))))
 
 (defn draw-grid [grid batch]
 	(loop [g grid]
