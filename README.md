@@ -7,7 +7,7 @@ This is just a quick dirty hack to play around and learn some new-to-me tech.
 
 ## What it looks like, since you probably won't be downloading this.
 
-![alt tag](http://i.imgur.com/NsdfOh9.gifv)
+![alt text](http://i.imgur.com/NsdfOh9.gif "Oops.")
 
 ## Usage
 
