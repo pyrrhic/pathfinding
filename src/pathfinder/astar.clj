@@ -16,8 +16,11 @@
           (= (count open) indx)
             cheapest-f-indx
           :else (recur (inc indx)
-                       (if (< (:f (nth open indx)) 
-                              (:f (nth open cheapest-f-indx)))
+                       (if (try (< (:f (nth open indx)) 
+                                   (:f (nth open cheapest-f-indx)))
+                                   (catch Exception e 
+                                     (println (:f (nth open indx))) 
+                                     (println (:f (nth open cheapest-f-indx)))))
                          indx
                          cheapest-f-indx)))))
 
@@ -71,7 +74,7 @@
       (recur (inc indx)))))
 
 (defn remove-node [vect node]
-  (conj vect (remove-indx vect (get-index-of-node vect node))))
+  (remove-indx vect (get-index-of-node vect node)))
 
 (defn get-node [vect node]
   (nth vect (get-index-of-node vect node)))
@@ -137,16 +140,16 @@
 ;when we're trying to build a path from the goal
 (defn calc-path [start goal tile-grid]
   "returns a string if no path is found, else returns the goal node with parent pointing all the way back to start."
-  (loop [open [(assoc start :g 0 :f 0)]
-         closed []]
-    (if (empty? open)
-      "no path found." ;failed to find a path
-      (let [current-index (get-cheapest-node-indx open)
-            current-node (nth open current-index)
-            open-without-current (remove-indx open current-index)
-            closed-with-current (conj closed current-node)]
-        (if (is-goal-node? current-node goal)
-          (extract-path current-node)
-          (let [updated-lists (inspect-neighbors current-node tile-grid open-without-current closed-with-current goal)]
-            (recur (:open updated-lists)
-                   (:closed updated-lists))))))))
+    (loop [open [(assoc start :g 0 :f 0)]
+           closed []]
+      (if (empty? open)
+        "no path found." ;failed to find a path
+        (let [current-index (get-cheapest-node-indx open)
+              current-node (nth open current-index)
+              open-without-current (remove-indx open current-index)
+              closed-with-current (conj closed current-node)]
+          (if (is-goal-node? current-node goal)
+            (extract-path current-node)
+            (let [updated-lists (inspect-neighbors current-node tile-grid open-without-current closed-with-current goal)]
+              (recur (:open updated-lists)
+                     (:closed updated-lists))))))))

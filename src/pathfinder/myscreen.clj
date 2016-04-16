@@ -8,14 +8,13 @@
 
 (def game {})
 
-(defn testing []
-  (astar/calc-path (grid/get-tile 0 0 (:tile-grid game))
-                   (grid/get-tile 3 3 (:tile-grid game))
-                   (:tile-grid game)))
+(def start [0 0])
+(def goal [4 4])
 
-(defn add-barrier [game x y]
-  (assoc-in (assoc-in game [:tile-grid x y :passable] false)
-            [:tile-grid x y :texture] (:barrier (:tex-cache game))))
+(defn calculate-path []
+  (astar/calc-path (grid/get-tile (nth start 0) (nth start 1) (:tile-grid game))
+                   (grid/get-tile (nth goal 0) (nth goal 1) (:tile-grid game))
+                   (:tile-grid game)))
 
 (defn input-processor []
   (reify InputProcessor
@@ -29,7 +28,7 @@
     (keyTyped [this character] false)
     (touchUp [this x y pointer button] 
       (alter-var-root (var game) #(assoc-in % [:inputs :mouse-x] x))
-      (alter-var-root (var game) #(assoc-in % [:inputs :mouse-y] y))
+      (alter-var-root (var game) #(assoc-in % [:inputs :mouse-y] (- 600 y)))
       false)
     (touchDragged [this x y pointer] false)
     (mouseMoved [this x y] false)
@@ -48,6 +47,7 @@
     :else nil))
 
 (defn set-place-state [game]
+  "updates the :place-state in the game map with either :place-start, :place-end, or :place-barrier"
   (assoc game :place-state 
           (if (nil? (get-state-from-input (:inputs game))) 
             (:place-state game) 
@@ -57,16 +57,61 @@
   (.begin (:batch game))
   (grid/draw-grid (:tile-grid game) (:batch game))
   (doall 
-    (map (fn [tile] (.draw (:batch game) (:path (:tex-cache game)) (float (:x tile)) (float (:y tile)))) (testing)))
+    (map (fn [tile] (.draw (:batch game) (:path (:tex-cache game)) (float (:x tile)) (float (:y tile)))) (calculate-path)))
+  (.draw (:batch game) 
+    (:start (:tex-cache game)) 
+    (float (* 32 (nth start 0))) 
+    (float (* 32 (nth start 1))))
+  (.draw (:batch game) 
+    (:goal (:tex-cache game)) 
+    (float (* 32 (nth goal 0))) 
+    (float (* 32 (nth goal 1))))
   (.end (:batch game))
   game)
 
 (defn clear-inputs [game]
   (assoc game :inputs {}))
 
+(defn pixel->tile [n]
+  (quot n 32))
+
+(defn add-barrier [game x y]
+  (assoc-in (assoc-in game [:tile-grid x y :passable] false)
+            [:tile-grid x y :texture] (:barrier (:tex-cache game))))
+
+(defn add-tile [game x y]
+  (assoc-in (assoc-in game [:tile-grid x y :passable] true)
+            [:tile-grid x y :texture] (:tile (:tex-cache game))))
+
+(defn add-start [game x y]
+  "replaces old start texture with a tile texture, updates the start var, and adds new start texture"
+  (let [g-no-start (add-tile game (nth start 0) (nth start 1))]
+    (alter-var-root (var start) (fn [s] [x y]))
+    (assoc-in (assoc-in g-no-start [:tile-grid x y :passable] true)
+            [:tile-grid x y :texture] (:start (:tex-cache g-no-start)))))
+
+(defn add-goal [game x y]
+  "replaces old goal texture with a tile texture, updates the goal var, and adds new goal texture"
+  (let [g-no-goal (add-tile game (nth goal 0) (nth goal 1))]
+    (alter-var-root (var goal) (fn [g] [x y]))
+    (assoc-in (assoc-in g-no-goal [:tile-grid x y :passable] true)
+              [:tile-grid x y :texture] (:goal (:tex-cache g-no-goal)))))
+
+(defn process-mouse-click [game]
+  (if (nil? (get-in game [:inputs :mouse-x]))
+    game
+    (let [x (get-in game [:inputs :mouse-x])
+          y (get-in game [:inputs :mouse-y])]
+      (case (:place-state game)
+        :place-barrier (add-barrier game (pixel->tile x) (pixel->tile y))
+        :place-start (add-start game (pixel->tile x) (pixel->tile y))
+        :place-end (add-goal game (pixel->tile x) (pixel->tile y))
+        :place-none game))))
+
 (defn game-loop [game delta]
-  (clear-screen)
-  (->> (set-place-state game)
+  (clear-screen) 
+  (-> (set-place-state game)
+    (process-mouse-click)
     (draw-everything)
     (clear-inputs)))
 
@@ -80,15 +125,12 @@
                                  :place-state :place-none
                                  :inputs {})] 
                   (assoc pre
-                    :tile-grid (let [g (grid/create-grid 10 12 (:tex-cache pre))
-                                     b (assoc-in g [2 1 :passable] false)
-                                     bb (assoc-in b [1 2 :passable] false)
-                                     bt (assoc-in bb [2 1 :texture] (:barrier (:tex-cache pre)))
-                                     bbt (assoc-in bt [1 2 :texture] (:barrier (:tex-cache pre)))]
-                                 bbt)))))
+                    :tile-grid (grid/create-grid 20 15 (:tex-cache pre))))))
     
     (render [this delta]
-      (alter-var-root (var game) #(game-loop % delta)))
+      (if (empty? game) ;so the app does not explode with a load this file into the repl. it'll explode because (show) is never called, and it sets up the game map.
+        ""
+        (alter-var-root (var game) #(game-loop % delta))))
     
     (dispose[this])
     (hide [this])
