@@ -5,6 +5,12 @@ Experimenting with Clojure, Libgdx (dat Java interop), and my implementation of 
 Super un-polished and un-optimized.
 This is just a quick dirty hack to play around and learn some new-to-me tech.
 
+And just incase you have no idea what the A Star path finding algorithm is, it's a shortest path algorithm.
+Not guaranteed shortest path, since it makes some trade-offs for performance reasons. 
+Usually see A Star or a variant of it in video games.
+
+If you want guaranteed shortest path I think dijkstra's algorithm would be a good alternative.
+
 ## What it looks like, since you probably won't be downloading this.
 
 ![alt text](http://i.imgur.com/NsdfOh9.gif "Oops.")
