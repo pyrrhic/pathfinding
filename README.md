@@ -23,7 +23,10 @@ Red - The destination.
 
 Light blue - The path from the start to the destination.
 
-Dark blue - "Walls". They are impassable. In the gif, I'm placing them at runtime.
+Dark blue - "Walls". They are impassable.
+
+In the gif, I'm moving these various things around the map with my mouse, but the cursor wasn't being recorded by the software I used. 
+¯\_(ツ)_/¯
 
 ## Usage
 
