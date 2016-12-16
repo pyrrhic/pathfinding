@@ -15,6 +15,11 @@ If you want guaranteed shortest path I think dijkstra's algorithm would be a goo
 
 ![alt text](http://i.imgur.com/NsdfOh9.gif "Oops.")
 
+Legend:
+Green - The starting location.
+Red - The destination.
+Light blue - The path from the start to the destination.
+Dark blue - "Walls". They are impassable. In the gif, I'm placing them at runtime.
 ## Usage
 
 Run desktop_launcher.clj.
